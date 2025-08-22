@@ -1,33 +1,32 @@
 import axios from 'axios';
-const axiosInstance= axios.create({
-  baseURL:"http://localhost:3000/api",
-  withCredentials: true,  
+
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5000/api", // 👈 match your backend port
+  withCredentials: true,
 });
-//request interceptor
+
+// Request interceptor
 axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token){
-            config.headers.Authorization = 'Bearer $(token)';
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // ✅ fixed
     }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
-// response interceptor 
+
+// Response interceptor
 axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error)=>{
-        if (error.response?.status ===401){
-            alert("Unauthorized. Please log in again.");
-            localStorage.clear();
-            setTimeout(()=>{
-                window.location.href="/";
-            },1500);
-        }
-        return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.clear();
+      window.location.href = "/login"; // ✅ direct redirect
     }
+    return Promise.reject(error);
+  }
 );
+
 export default axiosInstance;

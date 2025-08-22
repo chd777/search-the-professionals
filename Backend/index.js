@@ -1,30 +1,30 @@
-//Initialization
+// index.js
 import app from './app.js';
 import mongoose from 'mongoose';
 
-const port = 3000;
-//Routes
+const PORT = 3000;
+const MONGODB_URI = "mongodb+srv://satish:Satish@professionals.lnetor5.mongodb.net/?retryWrites=true&w=majority";
+
+// Middleware / test route (you can remove later)
 app.get('/', (_req, res) => {
-    res.send("This is the Homepage.");
-} );
-// Starting the server in a port
-app.listen(port, () => {
-    console .log(`Server Started at PORT: ${port}`);
+  res.send("This is the Homepage.");
 });
 
+// Connect to MongoDB and start server
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB successfully!");
 
-const uri = "mongodb+srv://satish:Satish@professionals.lnetor5.mongodb.net/?retryWrites=true&w=majority&appName=Professionals";
-
-const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
-
-async function run() {
-  try {
-    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
-    await mongoose.connect(uri, clientOptions);
-    await mongoose.connection.db.admin().command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-   
-  }
-}
-run().catch(console.dir);
+    // Start the server after successful DB connection
+    app.listen(PORT, () => {
+      console.log(`Server running on PORT: ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+    process.exit(1);
+  });

@@ -27,7 +27,7 @@ function Login() {
         setLoading(true);
         login(formData).then((res: AxiosResponse) => {
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("currentUser", JSON.stringify(res.data.userData));
+          localStorage.setItem("currentUser", JSON.stringify(res.data.user));
           navigate("/home");
         })
         .catch(
